@@ -86,8 +86,8 @@ return [
 
     'links' => [
         //  api 和 admin 两个项目文件
-        public_path('uploads') => \Illuminate\Support\Str::replaceFirst('-api', '-admin', public_path('uploads')),
-//        config_path('shopconfig.php') => \Illuminate\Support\Str::replaceFirst('-api', '-admin', config_path('shopconfig.php')),
+        public_path('uploads') => \Illuminate\Support\Str::replaceFirst('api', 'admin', public_path('uploads')),
+        config_path('shopconfig.php') => \Illuminate\Support\Str::replaceFirst('api', 'admin', config_path('shopconfig.php')),
     ],
 
 ];
