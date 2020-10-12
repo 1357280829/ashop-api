@@ -1,0 +1,1 @@
+/usr/local/var/www/ashop-admin/config/shopconfig.php
