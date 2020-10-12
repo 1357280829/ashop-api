@@ -24,45 +24,39 @@ function res($customCode = CustomCode::Success, $data = [], $message = '')
 }
 
 /**
- * 获取所有商城配置
+ * 获取单个或所有商城配置
  *
+ * @param null $key
  * @return \Illuminate\Config\Repository|mixed
  */
-function shop_configs()
+function shop_config($key = null)
 {
-    $shopConfigs = config('shopconfig.default');
+    if ($key) {
+        $shopConfigItem = DB::table('shop_config')->where('key', $key)->first();
 
-    $currentShopConfigs = DB::table('shop_config')
+        $shopConfigValue = $shopConfigItem ? $shopConfigItem->value : config('shopconfig.default.' . $key);
+        if ($key == 'shop_cover_url') {
+            $shopConfigValue = admin_url($shopConfigValue);
+        }
+
+        return $shopConfigValue;
+    }
+
+    $shopConfig = config('shopconfig.default');
+
+    $currentShopConfig = DB::table('shop_config')
         ->whereIn('key', config('shopconfig.keys'))
         ->pluck('value', 'key')
         ->toArray();
 
-    foreach ($shopConfigs as $key => $value) {
-        $shopConfigs[$key] = $currentShopConfigs[$key] ?? $value;
+    array_walk($shopConfig, function (&$value, $key) use ($currentShopConfig) {
+        $value = $currentShopConfig[$key] ?? $value;
         if ($key == 'shop_cover_url') {
-            $shopConfigs[$key] = admin_url($shopConfigs[$key]);
+            $value = admin_url($value);
         }
-    }
+    });
 
-    return $shopConfigs;
-}
-
-/**
- * 获取单个商城配置
- *
- * @param $key
- * @return \Illuminate\Config\Repository|mixed
- */
-function shop_config($key)
-{
-    $shopConfig = DB::table('shop_config')->where('key', $key)->first();
-
-    $shopConfigValue = $shopConfig ? $shopConfig->value : config('shopconfig.default.' . $key);
-    if ($key == 'shop_cover_url') {
-        $shopConfigValue = admin_url($shopConfigValue);
-    }
-
-    return $shopConfigValue;
+    return $shopConfig;
 }
 
 /**

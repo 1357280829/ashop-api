@@ -5,6 +5,9 @@
 /vendor
 /.idea
 
+/config/shopconfig.php
+dump.rdb
+showdoc_api.sh
 .env
 .env.backup
 .phpunit.result.cache
