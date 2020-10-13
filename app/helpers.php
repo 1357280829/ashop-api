@@ -31,11 +31,13 @@ function res($customCode = CustomCode::Success, $data = [], $message = '')
  */
 function shop_config($key = null)
 {
+    $urlKeys = config('shopconfig.url_keys');
+
     if ($key) {
         $shopConfigItem = DB::table('shop_config')->where('key', $key)->first();
 
         $shopConfigValue = $shopConfigItem ? $shopConfigItem->value : config('shopconfig.default.' . $key);
-        if ($key == 'shop_cover_url') {
+        if (in_array($key, $urlKeys)) {
             $shopConfigValue = admin_url($shopConfigValue);
         }
 
@@ -49,9 +51,9 @@ function shop_config($key = null)
         ->pluck('value', 'key')
         ->toArray();
 
-    array_walk($shopConfig, function (&$value, $key) use ($currentShopConfig) {
+    array_walk($shopConfig, function (&$value, $key) use ($currentShopConfig, $urlKeys) {
         $value = $currentShopConfig[$key] ?? $value;
-        if ($key == 'shop_cover_url') {
+        if (in_array($key, $urlKeys)) {
             $value = admin_url($value);
         }
     });
