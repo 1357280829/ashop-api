@@ -34,7 +34,10 @@ function shop_config($key = null)
     $urlKeys = config('shopconfig.url_keys');
 
     if ($key) {
-        $shopConfigItem = DB::table('shop_config')->where('key', $key)->first();
+        $shopConfigItem = DB::table('shop_config')
+            ->where('key', $key)
+            ->where('admin_user_id', store()->admin_user_id)
+            ->first();
 
         $shopConfigValue = $shopConfigItem ? $shopConfigItem->value : config('shopconfig.default.' . $key);
         if (in_array($key, $urlKeys)) {
@@ -48,6 +51,7 @@ function shop_config($key = null)
 
     $currentShopConfig = DB::table('shop_config')
         ->whereIn('key', config('shopconfig.keys'))
+        ->where('admin_user_id', store()->admin_user_id)
         ->pluck('value', 'key')
         ->toArray();
 
@@ -70,4 +74,24 @@ function shop_config($key = null)
 function admin_url($url)
 {
     return $url ? (url()->isValidUrl($url) ? $url : Storage::disk('admin')->url($url)) : $url;
+}
+
+/**
+ * 获取登陆的用户信息
+ *
+ * @return mixed
+ */
+function me()
+{
+    return request()->me;
+}
+
+/**
+ * 获取商家信息
+ *
+ * @return mixed
+ */
+function store()
+{
+    return request()->store;
 }

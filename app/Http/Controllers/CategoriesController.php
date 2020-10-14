@@ -26,10 +26,13 @@ class CategoriesController extends Controller
         $categories = Category::query()
             ->with([
                 'products' => function ($query) {
-                    return $query->where('is_on', 1)->orderByDesc('sort');
+                    return $query->where('is_on', 1)
+                        ->orderByDesc('sort')
+                        ->where('admin_user_id', store()->admin_user_id);
                 },
             ])
             ->orderByDesc('sort')
+            ->where('admin_user_id', store()->admin_user_id)
             ->get();
 
         return $this->res(CustomCode::Success, [

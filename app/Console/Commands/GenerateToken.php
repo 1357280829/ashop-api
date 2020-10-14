@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Handlers\TokenHandler;
-use App\Models\WechatUser;
 use Illuminate\Console\Command;
 
 class GenerateToken extends Command
@@ -39,14 +37,14 @@ class GenerateToken extends Command
      */
     public function handle()
     {
-        $wechatUserId = $this->argument('wechatUserId');
-
-        if (WechatUser::where('id', $wechatUserId)->doesntExist()) {
-            $this->error('用户不存在!');
-        } else {
-            $token = TokenHandler::create($wechatUserId, 'mini_program');
-            $this->info('token 创建成功!');
-            $this->info($token);
-        }
+//        $wechatUserId = $this->argument('wechatUserId');
+//
+//        if (WechatUser::where('id', $wechatUserId)->doesntExist()) {
+//            $this->error('用户不存在!');
+//        } else {
+//            $token = TokenHandler::create($wechatUserId, 'mini_program');
+//            $this->info('token 创建成功!');
+//            $this->info($token);
+//        }
     }
 }

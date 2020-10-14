@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Order\CreateNo;
+use App\Models\Traits\Order\CreateTakingCode;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, CreateNo, CreateTakingCode;
 
     protected $fillable = [
-        'phone', 'arrived_at', 'products', 'packing_price', 'delivery_price', 'total_price', 'remark',
+        'no', 'taking_code', 'phone', 'arrived_time', 'carts', 'total_price', 'is_paid', 'remark', 'wechat_user_id',
+        'admin_user_id',
     ];
 
     protected $casts = [
-        'products' => 'json',
+        'carts' => 'json',
     ];
 }

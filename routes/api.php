@@ -14,8 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('shop-config', [Controllers\ShopConfigController::class, 'index']);
+Route::group([
+    'middleware' => 'store.check',
+], function () {
+    Route::get('shop-config', [Controllers\ShopConfigController::class, 'index']);
 
-Route::get('categories', [Controllers\CategoriesController::class, 'index']);
+    Route::get('categories', [Controllers\CategoriesController::class, 'index']);
 
-Route::post('authenticated/mini-program', [Controllers\AuthenticatedsController::class, 'miniProgramsStore']);
+//    Route::post('authenticated/mini-program', [Controllers\AuthenticatedsController::class, 'miniProgramsStore']);
+//
+//    Route::group([
+//        'prefix'     => 'mine',
+//        'middleware' => 'authenticated.check',
+//    ], function () {
+//        Route::post('payments', [Controllers\Mine\PaymentsController::class, 'store']);
+//    });
+});

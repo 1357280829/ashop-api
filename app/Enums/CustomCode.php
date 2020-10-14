@@ -20,6 +20,8 @@ final class CustomCode extends Enum
     const AuthError = 20000;
     const UnboundPhone = 20001;
 
+    const StoreCheckError = 30000;
+
     protected static $customCodeToMessages = [
         self::Success => '请求成功',
         self::Fail => '请求失败',

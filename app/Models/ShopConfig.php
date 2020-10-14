@@ -11,6 +11,6 @@ class ShopConfig extends Model
     protected $table = 'shop_config';
 
     protected $fillable = [
-        'key', 'name', 'value',
+        'key', 'name', 'value', 'admin_user_id',
     ];
 }

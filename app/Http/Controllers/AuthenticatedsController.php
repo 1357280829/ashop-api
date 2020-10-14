@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\CustomCode;
 use App\Exceptions\CustomException;
-use App\Handlers\TokenHandler;
+use App\Models\Authenticated;
 use App\Models\WechatUser;
 use Illuminate\Http\Request;
 use Overtrue\LaravelWeChat\Facade as EasyWechat;
@@ -45,15 +45,30 @@ class AuthenticatedsController extends Controller
                 'country' => $decryptedData['country'],
                 'province' => $decryptedData['province'],
                 'city' => $decryptedData['city'],
+                'admin_user_id' => store()->admin_user_id,
                 'unionid' => $decryptedData['unionId'] ?? null,
             ]
         );
 
-        $token = TokenHandler::create($wechatUser->id, 'mini_program');
+        $ttl = config('authenticated-token.ttl');
+
+        $authenticated = Authenticated::updateOrCreate(
+            [
+                'authenticate_type' => 'mini_program',
+                'authenticated_user_model' => WechatUser::class,
+                'authenticated_user_id' => $wechatUser->id,
+            ],
+            [
+                'token' => Authenticated::createToken(),
+                'ttl' => $ttl,
+                'expired_at' => $ttl ? now()->addSeconds($ttl) : null,
+                'admin_user_id' => store()->admin_user_id,
+            ]
+        );
 
         return $this->res(CustomCode::Success, [
-            'token' => $token,
-            'authenticated' => $wechatUser,
+            'token' => $authenticated->token,
+            'authenticated_user' => $wechatUser,
         ]);
     }
 }
