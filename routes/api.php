@@ -21,12 +21,12 @@ Route::group([
 
     Route::get('categories', [Controllers\CategoriesController::class, 'index']);
 
-//    Route::post('authenticated/mini-program', [Controllers\AuthenticatedsController::class, 'miniProgramsStore']);
-//
-//    Route::group([
-//        'prefix'     => 'mine',
-//        'middleware' => 'authenticated.check',
-//    ], function () {
-//        Route::post('payments', [Controllers\Mine\PaymentsController::class, 'store']);
-//    });
+    Route::post('authenticated/mini-program', [Controllers\AuthenticatedsController::class, 'miniProgramsStore']);
+
+    Route::group([
+        'prefix'     => 'mine',
+        'middleware' => 'authenticated.check',
+    ], function () {
+        Route::post('payments', [Controllers\Mine\PaymentsController::class, 'store']);
+    });
 });

@@ -11,7 +11,24 @@ use Overtrue\LaravelWeChat\Facade as EasyWechat;
 
 class AuthenticatedsController extends Controller
 {
-    //  TODO:新增小程序认证者
+    /**
+     * showdoc
+     * @catalog 接口
+     * @title 新增小程序认证者
+     * @description 暂无
+     * @method  post
+     * @url  /authenticated/mini-program
+     * @param code           必选 string 小程序客户端code
+     * @param encrypted_data 必选 string 小程序客户端encrypted_data
+     * @param iv             必选 string 小程序客户端iv
+     * @param raw_data       必选 string 小程序客户端raw_data
+     * @param signature      必选 string 小程序客户端signature
+     * @return {}
+     * @return_param token              string 登陆凭证token
+     * @return_param authenticated_user array  微信用户认证者&nbsp;[参考](http://showdoc.deepack.top/web/#/5?page_id=82)
+     * @remark 暂无
+     * @number 1
+     */
     public function miniProgramsStore(Request $request)
     {
         $request->validate([
@@ -33,8 +50,10 @@ class AuthenticatedsController extends Controller
         //  获取解密数据
         $decryptedData = $miniProgram->encryptor->decryptData($miniProgramLoginResult['session_key'], $request->iv, $request->encrypted_data);
 
-        //  TODO:数据签名校验
-        //  ......
+        //  数据签名校验
+        if (sha1($request->raw_data . $miniProgramLoginResult['session_key']) != $request->signature) {
+            throw new CustomException('微信登陆失败');
+        }
 
         $wechatUser = WechatUser::firstOrCreate(
             ['openid_mini_program' => $miniProgramLoginResult['openid']],
@@ -45,8 +64,8 @@ class AuthenticatedsController extends Controller
                 'country' => $decryptedData['country'],
                 'province' => $decryptedData['province'],
                 'city' => $decryptedData['city'],
-                'admin_user_id' => store()->admin_user_id,
                 'unionid' => $decryptedData['unionId'] ?? null,
+                'admin_user_id' => store()->admin_user_id,
             ]
         );
 
