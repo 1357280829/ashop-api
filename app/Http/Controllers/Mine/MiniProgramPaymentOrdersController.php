@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Mine;
 
 use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
+use App\Models\MiniProgramPaymentOrder;
 use App\Models\Order;
 use App\Models\Product;
 use App\Rules\ValidPhone;
 use Illuminate\Http\Request;
+use Overtrue\LaravelWeChat\Facade as EasyWechat;
 
-class PaymentsController extends Controller
+class MiniProgramPaymentOrdersController extends Controller
 {
     public function store(Request $request)
     {
@@ -32,23 +34,19 @@ class PaymentsController extends Controller
             ->toArray();
 
         foreach ($validatedData['carts'] as &$cart) {
-
             if (!isset($productsDictionary[$cart['product_id']])) {
                 throw new CustomException('商品不存在');
             }
 
             $product = $productsDictionary[$cart['product_id']];
-
             if (!$product['is_on']) {
                 throw new CustomException('商品未上架');
             }
-
             if ($cart['number'] > $product['stock']) {
                 throw new CustomException('商品库存不足');
             }
 
             $cart['total_price'] = ($product['sale_price'] + $product['packing_price']) * $cart['number'];
-
             $cart['product'] = $product;
         }
 
@@ -58,11 +56,40 @@ class PaymentsController extends Controller
         }
 
         $validatedData['no'] = Order::createNo();
-        $validatedData['taking_code'] = Order::createTakingCode();
         $validatedData['total_price'] = $totalPrice;
         $validatedData['wechat_user_id'] = me()->id;
         $validatedData['admin_user_id'] = store()->admin_user_id;
 
         $order = Order::create($validatedData);
+
+        $result = EasyWechat::payment()->order->unify([
+            'body' => '商品下单购买',
+            'out_trade_no' => $order->no,
+            'total_fee' => $totalPrice,
+            'notify_url' => route('mini-program-payment-order-notifies.store'),
+            'trade_type' => 'JSAPI',
+            'openid' => me()->openid_mini_program,
+        ]);
+
+        $isSuccess = $result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS' ? 1 : 0;
+        $failMessage = $isSuccess ? null :
+            ($result['return_msg'] == 'OK' ? ($result['err_code_des'] ?? null) : $result['return_msg']);
+
+        MiniProgramPaymentOrder::create([
+            'admin_user_id' => store()->admin_user_id,
+            'wechat_user_id' => me()->id,
+            'openid' => me()->openid_mini_program,
+            'is_success' => $isSuccess,
+            'fail_code' => $result['err_code'] ?? null,
+            'fail_message' => $failMessage,
+            'prepay_id' => $result['prepay_id'] ?? null,
+            'result' => $result,
+        ]);
+
+        if (!$isSuccess) {
+            throw new CustomException('创建支付失败');
+        }
+
+        return $this->res();
     }
 }

@@ -27,6 +27,10 @@ Route::group([
         'prefix'     => 'mine',
         'middleware' => 'authenticated.check',
     ], function () {
-        Route::post('payments', [Controllers\Mine\PaymentsController::class, 'store']);
+        Route::resource('orders', Controllers\Mine\OrdersController::class)->only(['index', 'show']);
+
+        Route::post('mini-program-payment-orders', [Controllers\Mine\MiniProgramPaymentOrdersController::class, 'store']);
     });
 });
+
+Route::post('mine/mini-program-payment-order-notifies', [Controllers\Mine\MiniProgramPaymentOrderNotifiesController::class, 'store'])->name('mini-program-payment-order-notifies.store');
