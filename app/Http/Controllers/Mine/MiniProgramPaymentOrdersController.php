@@ -55,6 +55,11 @@ class MiniProgramPaymentOrdersController extends Controller
             throw new CustomException('商品总价有误');
         }
 
+        $minimumPrice = shop_config('minimum_price');
+        if ($minimumPrice && $totalPrice < $minimumPrice) {
+            throw new CustomException('商品总价不能低于最低消费');
+        }
+
         $validatedData['no'] = Order::createNo();
         $validatedData['total_price'] = $totalPrice;
         $validatedData['wechat_user_id'] = me()->id;
