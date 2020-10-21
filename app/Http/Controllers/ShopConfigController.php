@@ -21,6 +21,7 @@ class ShopConfigController extends Controller
      * @return_param shop_config.shop_name           string 商城店铺名
      * @return_param shop_config.shop_desc           string 商城简介
      * @return_param shop_config.business_hours      string 商城营业时间
+     * @return_param shop_config.minimum_price       string 商城最低消费
      * @remark 暂无
      * @number 1
      */
