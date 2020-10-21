@@ -11,7 +11,7 @@ class MiniProgramPaymentOrderNotifiesController extends Controller
     {
         $response = EasyWechat::payment()->handlePaidNotify(function ($message, $fail) {
 
-            //  TODO:
+            //  TODO
 
             return true;
         });

@@ -63,7 +63,7 @@ class MiniProgramPaymentOrdersController extends Controller
         $order = Order::create($validatedData);
 
         $result = EasyWechat::payment()->order->unify([
-            'body' => '商品下单购买',
+            'body' => '聪航餐饮店-烧鹅店',
             'out_trade_no' => $order->no,
             'total_fee' => $totalPrice,
             'notify_url' => route('mini-program-payment-order-notifies.store'),
@@ -73,7 +73,7 @@ class MiniProgramPaymentOrdersController extends Controller
 
         $isSuccess = $result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS' ? 1 : 0;
         $failMessage = $isSuccess ? null :
-            ($result['return_msg'] == 'OK' ? ($result['err_code_des'] ?? null) : $result['return_msg']);
+            ($result['err_code_des'] ?? ($result['return_msg'] && $result['return_msg'] != 'OK' ? $result['return_msg'] : null));
 
         MiniProgramPaymentOrder::create([
             'admin_user_id' => store()->admin_user_id,
