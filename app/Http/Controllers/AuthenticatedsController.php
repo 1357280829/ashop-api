@@ -56,7 +56,10 @@ class AuthenticatedsController extends Controller
         }
 
         $wechatUser = WechatUser::firstOrCreate(
-            ['openid_mini_program' => $miniProgramLoginResult['openid']],
+            [
+                'openid_mini_program' => $miniProgramLoginResult['openid'],
+                'admin_user_id' => store()->admin_user_id,
+            ],
             [
                 'nickname' => $decryptedData['nickName'],
                 'avatar_url' => $decryptedData['avatarUrl'],
@@ -65,7 +68,6 @@ class AuthenticatedsController extends Controller
                 'province' => $decryptedData['province'],
                 'city' => $decryptedData['city'],
                 'unionid' => $decryptedData['unionId'] ?? null,
-                'admin_user_id' => store()->admin_user_id,
             ]
         );
 
@@ -76,12 +78,12 @@ class AuthenticatedsController extends Controller
                 'authenticate_type' => 'mini_program',
                 'authenticated_user_model' => WechatUser::class,
                 'authenticated_user_id' => $wechatUser->id,
+                'admin_user_id' => store()->admin_user_id,
             ],
             [
                 'token' => Authenticated::createToken(),
                 'ttl' => $ttl,
                 'expired_at' => $ttl ? now()->addSeconds($ttl) : null,
-                'admin_user_id' => store()->admin_user_id,
             ]
         );
 

@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Authenticated;
+use App\Models\WechatUser;
 use Illuminate\Console\Command;
 
 class GenerateToken extends Command
@@ -11,7 +13,7 @@ class GenerateToken extends Command
      *
      * @var string
      */
-    protected $signature = 'make:token {wechatUserId=1}';
+    protected $signature = 'make:token {adminUserId=2} {userId=1} {userModel=wechat}';
 
     /**
      * The console command description.
@@ -37,14 +39,29 @@ class GenerateToken extends Command
      */
     public function handle()
     {
-//        $wechatUserId = $this->argument('wechatUserId');
-//
-//        if (WechatUser::where('id', $wechatUserId)->doesntExist()) {
-//            $this->error('用户不存在!');
-//        } else {
-//            $token = TokenHandler::create($wechatUserId, 'mini_program');
-//            $this->info('token 创建成功!');
-//            $this->info($token);
-//        }
+        $wechatUser = WechatUser::find($this->argument('userId'));
+        if (!$wechatUser) {
+            $this->info('用户不存在');
+            exit();
+        }
+
+        $ttl = 86400 * 365;
+
+        $authenticated = Authenticated::updateOrCreate(
+            [
+                'authenticate_type' => 'mini_program',
+                'authenticated_user_model' => WechatUser::class,
+                'authenticated_user_id' => $wechatUser->id,
+                'admin_user_id' => $this->argument('adminUserId'),
+            ],
+            [
+                'token' => Authenticated::createToken(),
+                'ttl' => $ttl,
+                'expired_at' => $ttl ? now()->addSeconds($ttl) : null,
+            ]
+        );
+
+        $this->info($authenticated->token);
+        $this->info('token已创建');
     }
 }
