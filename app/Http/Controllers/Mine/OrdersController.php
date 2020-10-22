@@ -6,6 +6,7 @@ use App\Enums\CustomCode;
 use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
@@ -15,20 +16,20 @@ class OrdersController extends Controller
      * @title 订单列表
      * @description 暂无
      * @method  get
-     * @url  /orders
+     * @url  /mine/orders
      * @param
      * @return {}
      * @return_param orders pagination 订单&nbsp;[参考](http://showdoc.deepack.top/web/#/5?page_id=84)
      * @remark 暂无
      * @number 1
      */
-    public function index()
+    public function index(Request $request)
     {
         $orders = Order::query()
             ->where('admin_user_id', store()->admin_user_id)
             ->where('wechat_user_id', me()->id)
             ->where('is_paid', 1)
-            ->paginate();
+            ->paginate($request->per_page);
 
         return $this->res(CustomCode::Success, [
             'orders' => $orders,
@@ -41,7 +42,7 @@ class OrdersController extends Controller
      * @title 订单详情
      * @description 暂无
      * @method  get
-     * @url  /orders/{order_id}
+     * @url  /mine/orders/{order_id}
      * @param
      * @return {}
      * @return_param order object 订单&nbsp;[参考](http://showdoc.deepack.top/web/#/5?page_id=84)
