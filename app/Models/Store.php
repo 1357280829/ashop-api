@@ -11,6 +11,7 @@ class Store extends Model
 
     protected $fillable = [
         'key', 'admin_user_id', 'business_license_code', 'business_license_name', 'is_enable_bill_service',
+        'mini_program_appid', 'mini_program_app_secret', 'payment_mch_id', 'payment_key',
     ];
 
     protected $hidden = [
