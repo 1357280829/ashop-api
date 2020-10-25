@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Mine;
 
+use App\Enums\CustomCode;
 use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
 use App\Models\MiniProgramPaymentOrder;
@@ -13,6 +14,25 @@ use Overtrue\LaravelWeChat\Facade as EasyWechat;
 
 class MiniProgramPaymentOrdersController extends Controller
 {
+    /**
+     * showdoc
+     * @catalog 接口
+     * @title 新增小程序支付预订单
+     * @description 暂无
+     * @method  post
+     * @url  /mine/mini-program-payment-orders
+     * @param carts              必选 array  购物车数据
+     * @param carts.*.product_id 必选 number 购物车商品id
+     * @param carts.*.number     必选 number 购物车商品购买数量
+     * @param total_price        必选 number 合计价
+     * @param phone              必选 string 联系电话
+     * @param arrived_time       必选 string 自提时间
+     * @param remark             必选 string 买家备注
+     * @return {}
+     * @return_param
+     * @remark 暂无
+     * @number 1
+     */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -96,6 +116,10 @@ class MiniProgramPaymentOrdersController extends Controller
             throw new CustomException('创建支付失败');
         }
 
-        return $this->res();
+        return $this->res(CustomCode::Success, [
+            'sign'      => $result['sign'],
+            'prepay_id' => $result['prepay_id'],
+            'nonce_str' => $result['nonce_str'],
+        ]);
     }
 }
