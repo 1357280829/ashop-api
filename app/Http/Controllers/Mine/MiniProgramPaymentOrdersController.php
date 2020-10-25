@@ -68,12 +68,13 @@ class MiniProgramPaymentOrdersController extends Controller
         $order = Order::create($validatedData);
 
         $result = EasyWechat::payment()->order->unify([
-            'body' => '聪航餐饮店-烧鹅店',
+            'body'         => '聪航餐饮店-烧鹅店',
             'out_trade_no' => $order->no,
-            'total_fee' => $totalPrice,
-            'notify_url' => route('mini-program-payment-order-notifies.store'),
-            'trade_type' => 'JSAPI',
-            'openid' => me()->openid_mini_program,
+            'total_fee'    => $totalPrice,
+            'notify_url'   => route('mini-program-payment-order-notifies.store'),
+            'trade_type'   => 'JSAPI',
+            'openid'       => me()->openid_mini_program,
+            'attach'       => json_encode(['store_key' => store()->key]),
         ]);
 
         $isSuccess = $result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS' ? 1 : 0;
@@ -81,14 +82,14 @@ class MiniProgramPaymentOrdersController extends Controller
             ($result['err_code_des'] ?? ($result['return_msg'] && $result['return_msg'] != 'OK' ? $result['return_msg'] : null));
 
         MiniProgramPaymentOrder::create([
-            'admin_user_id' => store()->admin_user_id,
+            'admin_user_id'  => store()->admin_user_id,
             'wechat_user_id' => me()->id,
-            'openid' => me()->openid_mini_program,
-            'is_success' => $isSuccess,
-            'fail_code' => $result['err_code'] ?? null,
-            'fail_message' => $failMessage,
-            'prepay_id' => $result['prepay_id'] ?? null,
-            'result' => $result,
+            'openid'         => me()->openid_mini_program,
+            'is_success'     => $isSuccess,
+            'fail_code'      => $result['err_code'] ?? null,
+            'fail_message'   => $failMessage,
+            'prepay_id'      => $result['prepay_id'] ?? null,
+            'result'         => $result,
         ]);
 
         if (!$isSuccess) {

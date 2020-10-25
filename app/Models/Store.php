@@ -10,7 +10,7 @@ class Store extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'key', 'admin_user_id',
+        'key', 'admin_user_id', 'business_license_code', 'business_license_name', 'is_enable_bill_service',
     ];
 
     protected $hidden = [
