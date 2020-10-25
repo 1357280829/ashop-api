@@ -70,7 +70,7 @@ class MiniProgramPaymentOrdersController extends Controller
         $result = EasyWechat::payment()->order->unify([
             'body'         => '聪航餐饮店-烧鹅店',
             'out_trade_no' => $order->no,
-            'total_fee'    => $totalPrice,
+            'total_fee'    => $totalPrice * 100,
             'notify_url'   => route('mini-program-payment-order-notifies.store'),
             'trade_type'   => 'JSAPI',
             'openid'       => me()->openid_mini_program,
