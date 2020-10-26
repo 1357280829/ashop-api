@@ -10,7 +10,6 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Rules\ValidPhone;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Overtrue\LaravelWeChat\Facade as EasyWechat;
 
 class MiniProgramPaymentOrdersController extends Controller
@@ -30,7 +29,7 @@ class MiniProgramPaymentOrdersController extends Controller
      * @param arrived_time       必选 string 自提时间
      * @param remark             必选 string 买家备注
      * @return {}
-     * @return_param
+     * @return_param payment_params object 拉起微信支付所需参数
      * @remark 暂无
      * @number 1
      */
