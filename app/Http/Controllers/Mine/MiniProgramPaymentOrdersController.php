@@ -29,6 +29,7 @@ class MiniProgramPaymentOrdersController extends Controller
      * @param arrived_time       必选 string 自提时间
      * @param remark             必选 string 买家备注
      * @return {}
+     * @return_param order_id       number 订单id
      * @return_param payment_params object 拉起微信支付所需参数
      * @remark 暂无
      * @number 1
@@ -125,6 +126,7 @@ class MiniProgramPaymentOrdersController extends Controller
         unset($paymentParams['appId']);
 
         return $this->res(CustomCode::Success, [
+            'order_id' => $order->id,
             'payment_params' => $paymentParams,
         ]);
     }
