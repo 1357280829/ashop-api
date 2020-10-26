@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Rules\ValidPhone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Overtrue\LaravelWeChat\Facade as EasyWechat;
 
 class MiniProgramPaymentOrdersController extends Controller
@@ -92,8 +93,11 @@ class MiniProgramPaymentOrdersController extends Controller
         $payment->config->mch_id = store()->payment_mch_id;
         $payment->config->key = store()->payment_key;
 
+        Log::debug('支付参数');
+        Log::debug($payment);
+
         $result = $payment->order->unify([
-            'body'         => '聪航餐饮店-烧鹅店',
+            'body'         => '聪航餐饮店',
             'out_trade_no' => $order->no,
             'total_fee'    => $totalPrice * 100,
             'notify_url'   => route('mini-program-payment-order-notifies.store'),
@@ -101,6 +105,8 @@ class MiniProgramPaymentOrdersController extends Controller
             'openid'       => me()->openid_mini_program,
             'attach'       => json_encode(['store_key' => store()->key]),
         ]);
+
+        Log::debug(me()->toArray());
 
         $isSuccess = $result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS' ? 1 : 0;
         $failMessage = $isSuccess ? null :
