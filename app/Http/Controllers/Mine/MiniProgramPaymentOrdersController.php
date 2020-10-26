@@ -122,7 +122,6 @@ class MiniProgramPaymentOrdersController extends Controller
         }
 
         $paymentParams = $payment->jssdk->bridgeConfig($result['prepay_id'], false);
-        unset($paymentParams['appId']);
 
         return $this->res(CustomCode::Success, [
             'order_id' => $order->id,
