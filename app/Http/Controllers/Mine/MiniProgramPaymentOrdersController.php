@@ -122,10 +122,11 @@ class MiniProgramPaymentOrdersController extends Controller
             throw new CustomException('创建支付失败');
         }
 
+        $paymentParams = $payment->jssdk->bridgeConfig($result['prepay_id'], false);
+        unset($paymentParams['appId']);
+
         return $this->res(CustomCode::Success, [
-            'sign'      => $result['sign'],
-            'prepay_id' => $result['prepay_id'],
-            'nonce_str' => $result['nonce_str'],
+            'payment_params' => $paymentParams,
         ]);
     }
 }
