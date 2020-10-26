@@ -87,7 +87,12 @@ class MiniProgramPaymentOrdersController extends Controller
 
         $order = Order::create($validatedData);
 
-        $result = EasyWechat::payment()->order->unify([
+        $payment = EasyWechat::payment();
+        $payment->config->app_id = store()->mini_program_appid;
+        $payment->config->mch_id = store()->payment_mch_id;
+        $payment->config->key = store()->payment_key;
+
+        $result = $payment->order->unify([
             'body'         => '聪航餐饮店-烧鹅店',
             'out_trade_no' => $order->no,
             'total_fee'    => $totalPrice * 100,

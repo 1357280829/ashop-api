@@ -40,6 +40,8 @@ class AuthenticatedsController extends Controller
         ]);
 
         $miniProgram = EasyWechat::miniProgram();
+        $miniProgram->config->app_id = store()->mini_program_appid;
+        $miniProgram->config->secret = store()->mini_program_app_secret;
 
         //  获取用户 openid 及 session_key
         $miniProgramLoginResult = $miniProgram->auth->session($request->code);
