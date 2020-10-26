@@ -21,7 +21,7 @@ class MiniProgramPaymentOrderNotifiesController extends Controller
             $failMessage = $isSuccess ? null :
                 ($message['err_code_des'] ?? (isset($message['return_msg']) && $message['return_msg'] != 'OK' ? $message['return_msg'] : null));
 
-            $store = Store::where('key', json_decode($message['attach'], true)['store_key'])->first();
+            $store = Store::where('mini_program_appid', $message['appid'])->first();
 
             $order = Order::where('no', $message['out_trade_no'])->first();
 

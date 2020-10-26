@@ -8,7 +8,7 @@ use App\Models\Store;
 use Closure;
 use Illuminate\Http\Request;
 
-class CheckStoreKey
+class CheckMiniProgramAppid
 {
     /**
      * Handle an incoming request.
@@ -19,9 +19,9 @@ class CheckStoreKey
      */
     public function handle(Request $request, Closure $next)
     {
-        $storeKey = $request->header('store-key');
+        $appid = $request->header('appid');
 
-        $store = Store::with('AdminUser')->where('key', $storeKey)->first();
+        $store = Store::with('AdminUser')->where('mini_program_appid', $appid)->first();
         if (!$store) {
             throw new CustomException('商铺 认证失败', CustomCode::StoreCheckError);
         }

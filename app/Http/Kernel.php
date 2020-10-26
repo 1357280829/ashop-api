@@ -67,6 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'authenticated.check' => \App\Http\Middleware\CheckAuthenticatedToken::class,
-        'store.check' => \App\Http\Middleware\CheckStoreKey::class,
+        'store.check' => \App\Http\Middleware\CheckMiniProgramAppid::class,
     ];
 }

@@ -100,7 +100,6 @@ class MiniProgramPaymentOrdersController extends Controller
             'notify_url'   => route('mini-program-payment-order-notifies.store'),
             'trade_type'   => 'JSAPI',
             'openid'       => me()->openid_mini_program,
-            'attach'       => json_encode(['store_key' => store()->key]),
         ]);
 
         $isSuccess = $result['return_code'] == 'SUCCESS' && $result['result_code'] == 'SUCCESS' ? 1 : 0;
