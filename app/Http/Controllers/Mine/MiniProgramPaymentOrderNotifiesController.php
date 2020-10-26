@@ -41,7 +41,7 @@ class MiniProgramPaymentOrderNotifiesController extends Controller
                     DB::beginTransaction();
 
                     $order->is_paid = 1;
-                    $order->taking_code = Order::createTakingCode();
+                    $order->taking_code = Order::createTakingCode($store ? $store->admin_user_id : 0);
                     $order->save();
 
                     foreach ($order->carts as $cart) {

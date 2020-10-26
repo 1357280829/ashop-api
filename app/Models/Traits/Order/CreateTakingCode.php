@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Cache;
 trait CreateTakingCode
 {
     //  创建取餐码
-    public static function createTakingCode()
+    public static function createTakingCode($adminUserId)
     {
         $today = date('d');
 
-        $cacheKey = 'taking_code-' . store()->admin_user_id .'-' . $today;
+        $cacheKey = 'taking_code-' . $adminUserId .'-' . $today;
 
         if (Cache::has($cacheKey)) {
             $takingCode = $today . str_pad((substr(Cache::get($cacheKey), -3) + 1), 3, 0, STR_PAD_LEFT);
